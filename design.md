@@ -3,14 +3,14 @@
 * Contact Us
 * Facebook account link with logo - https://www.facebook.com/fourseasonsgolfclub
 * Instagram account link with logo - Create account
-* Google maps location - Claim bussiness
+* Google maps location - Claim business
 
 ### Footer - Common for all pages
 * Copyright information
 * Contact Us
 * Events
 * Facebook account link with logo
-* Instagran account link with logo
+* Instagram account link with logo
 
 ### Home Page
 * Golf course photo slideshow
@@ -44,7 +44,7 @@
 * Add, Update, or Delete weekly events
 
 ### Design
-* Primary color: shade of ligtht green
+* Primary color: shade of light green
 * Secondary color: ??
 * Font: ??
 * Need high resolution images of the golf course (10-12)
