@@ -1,67 +1,51 @@
-self.addEventListener("install", function (e) {
+const PRECACHE = 'precache-v1';
+const RUNTIME = 'runtime';
+
+// A list of local resources we always want to be cached.
+const PRECACHE_URLS = [
+  'index.html',
+  'script.js'
+];
+
+self.addEventListener("install", function (event) {
     console.log("Service worker installation");
-    e.waitUntil(
-        caches.open("tpatel-resume").then(function(cache) {
-            console.log("Alloy service worker caching dependencies");
-            initialCache.map(function(url) {
-                return cache.add(url).catch(function(reason) {
-                    return console.log(
-                        "Alloy: " + String(reason) + " " + url
-                    );
-                });
+    event.waitUntil(
+        caches.open(PRECACHE)
+        .then(cache => cache.addAll(PRECACHE_URLS))
+        .then(self.skipWaiting())
+    );
+});
+
+self.addEventListener("activate", event => {
+    const currentCaches = [PRECACHE, RUNTIME];
+    event.waitUntil(
+      caches.keys().then(cacheNames => {
+        return cacheNames.filter(cacheName => !currentCaches.includes(cacheName));
+      }).then(cachesToDelete => {
+        return Promise.all(cachesToDelete.map(cacheToDelete => {
+          return caches.delete(cacheToDelete);
+        }));
+      }).then(() => self.clients.claim())
+    );
+  });
+  
+  self.addEventListener("fetch", event => {
+    if (event.request.url.startsWith(self.location.origin)) {
+      event.respondWith(
+        caches.match(event.request).then(cachedResponse => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+  
+          return caches.open(RUNTIME).then(cache => {
+            return fetch(event.request).then(response => {
+              // Put a copy of the response in the runtime cache.
+              return cache.put(event.request, response.clone()).then(() => {
+                return response;
+              });
             });
+          });
         })
-    );
-});
-
-self.addEventListener("activate", function(e) {
-    console.log("Service worker activation");
-    e.waitUntil(
-        caches.keys().then(function(keyList) {
-            return Promise.all(
-                keyList.map(function(key) {
-                    if (key !== "tpatel-resume") {
-                        console.log("Old cache removed", key);
-                        return caches.delete(key);
-                    }
-                })
-            );
-        })
-    );
-    return self.clients.claim();
-});
-
-self.addEventListener("fetch", function(e) {
-    if (new URL(e.request.url).origin !== location.origin) return;
-
-    if (e.request.mode === "navigate" && navigator.onLine) {
-        e.respondWith(
-            fetch(e.request).then(function(response) {
-                return caches.open("tpatel-resume").then(function(cache) {
-                    cache.put(e.request, response.clone());
-                    return response;
-                });
-            })
-        );
-        return;
+      );
     }
-
-    e.respondWith(
-        caches
-            .match(e.request)
-            .then(function(response) {
-                return (
-                    response ||
-                    fetch(e.request).then(function(response) {
-                        return caches.open("tpatel-resume").then(function(cache) {
-                            cache.put(e.request, response.clone());
-                            return response;
-                        });
-                    })
-                );
-            })
-            .catch(function() {
-                return caches.match(offlinePage);
-            })
-    );
-});
+  });
