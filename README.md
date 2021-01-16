@@ -1,2 +1,2 @@
 # taralpatel610.github.io
-Taral's Github IO page
+Taral's Github IO page resume
