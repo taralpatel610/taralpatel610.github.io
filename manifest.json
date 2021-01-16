@@ -1,6 +1,8 @@
 {
     "short_name": "TPatel",
     "name": "Taral Patel - Resume",
+    "description": "Taral Patel - Resume",
+    "orientation": "any",
     "icons": [
     {
     "src":"/icon.png",
@@ -8,8 +10,8 @@
     "type": "image/png"
     }
     ],
-    "start_url": "/index.html",
-    "background_color": "#e05a47",
-    "theme_color": "#e05a47",
+    "start_url": "/",
+    "background_color": "#fff",
+    "theme_color": "#fff",
     "display": "standalone"
   }
